@@ -7,6 +7,8 @@ import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
 import PrivateRoute from "./privateRoute";
 import DashboardDetails from "../Pages/Dashboard/DashboardDetails/DashboardDetails";
 import UserProfile from "../Pages/Dashboard/UserProfile/UserProfile";
+import AllJobs from "../Pages/AllJobs/AllJobs";
+import AllJobsDetails from "../Pages/AllJobsDetails/AllJobsDetails";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +18,12 @@ export const router = createBrowserRouter([
       {
         path:"/",
         element:<Home></Home>
+      },{
+        path:"/allJobs",
+        element:<PrivateRoute><AllJobs></AllJobs></PrivateRoute>
+      },{
+        path:"/jobs/:id",
+        element:<PrivateRoute><AllJobsDetails></AllJobsDetails></PrivateRoute>
       }
     ]
   },
