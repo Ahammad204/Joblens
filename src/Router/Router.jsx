@@ -9,6 +9,7 @@ import DashboardDetails from "../Pages/Dashboard/DashboardDetails/DashboardDetai
 import UserProfile from "../Pages/Dashboard/UserProfile/UserProfile";
 import AllJobs from "../Pages/AllJobs/AllJobs";
 import AllJobsDetails from "../Pages/AllJobsDetails/AllJobsDetails";
+import AllResources from "../Pages/AllResources/AllResources";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,9 @@ export const router = createBrowserRouter([
       },{
         path:"/jobs/:id",
         element:<PrivateRoute><AllJobsDetails></AllJobsDetails></PrivateRoute>
+      },{
+        path:"/allResources",
+        element:<PrivateRoute><AllResources></AllResources></PrivateRoute>
       }
     ]
   },
