@@ -100,6 +100,7 @@ const AuthProvider = ({ children }) => {
 
   const authValues = {
     user,
+     setUser,
     register,
     login,
     logout,
