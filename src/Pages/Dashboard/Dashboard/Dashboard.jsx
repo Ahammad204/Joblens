@@ -24,7 +24,7 @@ const Dashboard = () => {
                 <FaHome /> Home
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/dashboard/myservice" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
                 <FaTasks /> My Services
               </NavLink>
@@ -38,7 +38,7 @@ const Dashboard = () => {
               <NavLink to="/dashboard/myrentalItem" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
                 <FaBoxOpen /> My Rental Items
               </NavLink>
-            </li>
+            </li> */}
 
             {/* Create Dropdown
             <li className="relative">
