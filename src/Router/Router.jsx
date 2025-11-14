@@ -12,6 +12,7 @@ import AllJobsDetails from "../Pages/AllJobsDetails/AllJobsDetails";
 import AllResources from "../Pages/AllResources/AllResources";
 import Home from "../Pages/Home/Home/Home";
 import CVAutoAnalysis from "../Pages/Dashboard/ProfileAnysis/CVAutoAnalysis";
+import Roadmap from "../Pages/Dashboard/Roadmap/Roadmap";
 
 export const router = createBrowserRouter([
   {
@@ -83,7 +84,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/auto-cv-analysis",
         element: <CVAutoAnalysis />,
-      },
+      },{
+        path:"/dashboard/roadmap",
+        element: <Roadmap></Roadmap>
+      }
     ],
   },
 ]);

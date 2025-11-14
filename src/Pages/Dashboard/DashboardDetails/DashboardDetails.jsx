@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../Hooks/useAuth";
 import axiosPublic from "../../../utils/axiosPublic";
+import toast from "react-hot-toast";
 
 const DashboardDetails = () => {
   const navigate = useNavigate();
@@ -15,10 +16,18 @@ const DashboardDetails = () => {
   const [recommendedJobs, setRecommendedJobs] = useState([]);
   const [recentApplications, setRecentApplications] = useState([]);
   const [learningResources, setLearningResources] = useState([]);
-  // NEW STATE: To store resources recommended for a skill gap
-  const [skillGapRecommendations, setSkillGapRecommendations] = useState({}); // { jobId: [{resource}] }
+  const [skillGapRecommendations, setSkillGapRecommendations] = useState({});
   const { user, setUser } = useAuth();
 
+
+  const [roadmap, setRoadmap] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [roadmapInput, setRoadmapInput] = useState({
+    targetRole: "", // e.g., 'Frontend Developer'
+    timeframe: "3 Months",
+    learningTime: "10 hours per week",
+  });
+  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   // Helper function to fetch learning resources for a specific job's skill gap
   const fetchSkillGapResources = async (jobId, missingSkills) => {
     if (missingSkills.length === 0) return;
@@ -84,17 +93,96 @@ const DashboardDetails = () => {
       console.error("Error fetching learning resources:", err);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      fetchJobs();
-      fetchLearning();
-      setRecentApplications(user.recentApplications || []);
+  const fetchRoadmap = async () => {
+    try {
+      const res = await axiosPublic.get("/api/roadmap");
+      setRoadmap(res.data);
+    } catch (err) {
+      console.log("No existing roadmap found or error fetching.");
+      setRoadmap(null); // Clear roadmap if not found
     }
-  }, [user]);
+  };
+
+  const generateRoadmap = async () => {
+    setIsGenerating(true);
+    try {
+      if (!user?.skills || user.skills.length === 0) {
+        alert("Please complete your profile with skills before generating a roadmap!");
+        setIsGenerating(false);
+        return;
+      }
+      
+      const payload = {
+        ...roadmapInput,
+        currentSkills: user.skills,
+      };
+
+      const res = await axiosPublic.post("/api/roadmap/generate", payload);
+      setRoadmap(res.data);
+      setIsInputModalOpen(false); // Close modal on success
+      toast.success("Roadmap generated successfully!");
+      
+    } catch (err) {
+      console.error("Error generating roadmap:", err);
+      toast.error("Failed to generate roadmap. Please check the console for details.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+useEffect(() => {
+  if (user) {
+   fetchJobs();
+   fetchLearning();
+   setRecentApplications(user.recentApplications || []);
+      // NEW: Fetch existing roadmap on load
+      fetchRoadmap(); 
+  }
+ }, [user]);
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
+      {/* Roadmap Card (MODIFIED SECTION) */}
+      <div className="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-800 mb-3">
+          {roadmap ? "Your Personalized Roadmap" : "Generate Your Career Roadmap"}
+        </h2>
+        <p className="text-gray-600 mb-6">
+          {roadmap 
+            ? `Roadmap for **${roadmap.targetRole}** over **${roadmap.timeframe}** is ready. Check your progress, or generate a new one!`
+            : "Use AI to create a tailored, step-by-step learning plan to land your dream job."}
+        </p>
+
+        <div className="flex justify-center space-x-4">
+          {roadmap && (
+            // 1. View Roadmap Button (Visible if roadmap exists)
+            <button
+              onClick={() => navigate("/dashboard/roadmap")}
+              className="bg-purple-600 text-white px-6 py-2 rounded-lg cursor-pointer font-semibold hover:bg-purple-700 transition-colors duration-200"
+              disabled={isGenerating}
+            >
+              View Current Roadmap
+            </button>
+          )}
+
+          {/* 2. Generate Roadmap Button:
+            - If a roadmap exists, this button opens the input modal to create a new one.
+            - If no roadmap exists, this is the main button to start the process.
+          */}
+          <button
+            onClick={() => setIsInputModalOpen(true)}
+            className={`px-6 py-2 rounded-lg cursor-pointer font-semibold transition-colors duration-200 ${
+              isGenerating
+                ? 'bg-gray-400 text-white cursor-not-allowed'
+                : roadmap
+                  ? 'bg-blue-500 text-white hover:bg-blue-600' // Different color for 'Generate New'
+                  : 'bg-purple-600 text-white hover:bg-purple-700' // Original color for 'Generate'
+            }`}
+            disabled={isGenerating}
+          >
+            {isGenerating ? "Generating..." : roadmap ? "Generate New Roadmap" : "Generate Roadmap"}
+          </button>
+        </div>
+      </div>
       {/* Profile Completion Card */}
       <div className="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-200">
         <h2 className="text-2xl font-bold text-gray-800 mb-3">
@@ -271,6 +359,66 @@ const DashboardDetails = () => {
           </div>
         </div>
       </div>
+      {isInputModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 w-full max-w-md shadow-2xl">
+            <h3 className="text-2xl font-bold mb-6 text-gray-800">Configure Roadmap</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Target Role</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Frontend Developer, Data Analyst"
+                  value={roadmapInput.targetRole}
+                  onChange={(e) => setRoadmapInput({...roadmapInput, targetRole: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#0fb894] focus:border-[#0fb894]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Timeframe</label>
+                <select
+                  value={roadmapInput.timeframe}
+                  onChange={(e) => setRoadmapInput({...roadmapInput, timeframe: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#0fb894] focus:border-[#0fb894]"
+                >
+                  <option value="3 Months">3 Months</option>
+                  <option value="6 Months">6 Months</option>
+                  <option value="12 Months">12 Months</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Available Learning Time (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g., 5 hours per week or 2 hours per day"
+                  value={roadmapInput.learningTime}
+                  onChange={(e) => setRoadmapInput({...roadmapInput, learningTime: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#0fb894] focus:border-[#0fb894]"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => setIsInputModalOpen(false)}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={generateRoadmap}
+                disabled={isGenerating || !roadmapInput.targetRole}
+                className={`px-4 py-2 text-white rounded-lg font-semibold transition-colors duration-200 ${
+                  isGenerating || !roadmapInput.targetRole 
+                    ? 'bg-purple-400 cursor-not-allowed' 
+                    : 'bg-purple-600 hover:bg-purple-700'
+                }`}
+              >
+                {isGenerating ? "Generating..." : "Generate Roadmap"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
