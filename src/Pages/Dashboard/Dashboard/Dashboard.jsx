@@ -30,66 +30,11 @@ const Dashboard = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/dashboard/auto-cv-analysis" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaHome /> Cv Analyis
+              <NavLink to="/dashboard/profile" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
+                <FaHome /> Profile
               </NavLink>
             </li>
-            {/* <li>
-              <NavLink to="/dashboard/myservice" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaTasks /> My Services
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/dashboard/myserviceRequest" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaTasks /> My Service Requests
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/dashboard/myrentalItem" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaBoxOpen /> My Rental Items
-              </NavLink>
-            </li> */}
-
-            {/* Create Dropdown
-            <li className="relative">
-              <button
-                onClick={() => setCreateDropdown(!createDropdown)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#0fb894]/20 transition-colors duration-200"
-              >
-                <FaHandHoldingMedical /> Create
-              </button>
-              {createDropdown && (
-                <ul className="absolute top-full mt-2 w-52 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-20">
-                  <li>
-                    <NavLink
-                      to="/dashboard/createTask"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                      onClick={() => setCreateDropdown(false)}
-                    >
-                      <FaHandHoldingMedical className="inline mr-2" /> Create Service
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/serviceRequest"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                      onClick={() => setCreateDropdown(false)}
-                    >
-                      <FaHandHoldingMedical className="inline mr-2" /> Create Service Request
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/rentPost"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                      onClick={() => setCreateDropdown(false)}
-                    >
-                      <FaBoxOpen className="inline mr-2" /> Create Rent Post
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
-            </li> */}
+        
           </ul>
 
           {/* User Info */}

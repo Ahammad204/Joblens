@@ -13,6 +13,7 @@ import AllResources from "../Pages/AllResources/AllResources";
 import Home from "../Pages/Home/Home/Home";
 import CVAutoAnalysis from "../Pages/Dashboard/ProfileAnysis/CVAutoAnalysis";
 import Roadmap from "../Pages/Dashboard/Roadmap/Roadmap";
+import Chatbot from "../componet/chatbot/Chatbot";
 
 export const router = createBrowserRouter([
   {
@@ -46,7 +47,10 @@ export const router = createBrowserRouter([
             <AllResources></AllResources>
           </PrivateRoute>
         ),
-      },
+      },{
+        path:"/chat",
+        element:<Chatbot></Chatbot>
+      }
     ],
   },
   {
@@ -82,7 +86,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard/auto-cv-analysis",
+        path: "/dashboard/profile",
         element: <CVAutoAnalysis />,
       },{
         path:"/dashboard/roadmap",

@@ -23,7 +23,6 @@ export const analyzeCV = async (cvText) => {
     return { skills: [], tools: [], roles: [], explain: "No CV text provided." };
   }
 
-  
   try {
     const { data } = await axiosPublic.post("/api/cv/analyze", { cvText }, {
       withCredentials: true,

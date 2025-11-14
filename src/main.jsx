@@ -5,6 +5,8 @@ import { router } from './Router/Router'
 import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import AuthProvider from './Provider/AuthProvider'
+import FloatingChat from './componet/FloatingChat/FloatingChat'
+
 
 
 createRoot(document.getElementById('root')).render(
@@ -13,6 +15,7 @@ createRoot(document.getElementById('root')).render(
       <div className="max-w-7xl p-2 md:p-0 mx-auto">
       <RouterProvider router={router} />
       <Toaster></Toaster>
+      <FloatingChat></FloatingChat>
     </div>
    </AuthProvider>
 
