@@ -12,6 +12,7 @@ const EditableInput = ({ label, initialValue, onSave }) => {
   const [value, setValue] = useState(initialValue || "");
   const [isEditing, setIsEditing] = useState(false);
 
+
   const handleSave = () => {
     if (value.trim() !== (initialValue || "")) {
       onSave(value.trim());
@@ -50,6 +51,7 @@ const EditableInput = ({ label, initialValue, onSave }) => {
           </>
         )}
       </div>
+      
     </div>
   );
 };
@@ -114,6 +116,7 @@ const EditableTagSection = ({ title, items, onUpdate }) => {
   );
 };
 
+
 // --- Main Component ---
 
 const CVAutoAnalysis = () => {
@@ -121,7 +124,20 @@ const CVAutoAnalysis = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reanalyzing, setReanalyzing] = useState(false);
+const [generatedCV, setGeneratedCV] = useState(null);
+const [loadingCV, setLoadingCV] = useState(false);
 
+const generateCV = async () => {
+  try {
+    setLoadingCV(true);
+    const res = await axiosPublic.post("/api/cv/generate", {}, { withCredentials: true });
+    setGeneratedCV(res.data);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoadingCV(false);
+  }
+};
   const fetchProfile = useCallback(async () => {
     if (!user) return;
     try {
@@ -149,7 +165,7 @@ const CVAutoAnalysis = () => {
     setProfileData(updatedData);
 
     try {
-      const res = await axiosPublic.patch(`/api/users/${user._id}`, { [field]: value }, { withCredentials: true });
+      const res = await axiosPublic.patch(`/users/${user._id}`, { [field]: value }, { withCredentials: true });
       // Update the global user context (if necessary, depends on useAuth implementation)
       // setUser(res.data); // Assuming server returns the updated user object
       console.log(`${field} updated successfully.`);
@@ -207,6 +223,7 @@ const CVAutoAnalysis = () => {
       <h2 className="text-4xl font-extrabold mb-8 text-red-600 border-b pb-4">
         <span role="img" aria-label="profile">👤</span> Your Profile
       </h2>
+      
 
       {/* Basic Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
@@ -298,6 +315,62 @@ const CVAutoAnalysis = () => {
           {reanalyzing ? "Re-analyzing CV..." : user?.resume ? "Re-analyze CV" : "Upload Resume to Analyze"}
         </button>
       </div>
+     
+
+{/* --- AI Generated CV Section --- */}
+<div className="mt-8">
+  <button
+    onClick={generateCV}
+    disabled={loadingCV}
+    className={`w-full ${loadingCV ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700'} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
+  >
+    {loadingCV ? "Generating CV..." : "Generate AI CV"}
+  </button>
+</div>
+{generatedCV && (
+  <div className="bg-white p-6 rounded-xl shadow-md mt-6">
+    <h2 className="text-3xl font-bold mb-4">{generatedCV?.personalInfo?.name}</h2>
+    <p className="text-sm mb-2">{generatedCV?.personalInfo?.email}</p>
+    <p className="mb-4">{generatedCV?.professionalSummary}</p>
+
+    <h3 className="font-semibold mt-4">Experience</h3>
+    {generatedCV?.experience?.map((exp, i) => (
+      <div key={i} className="mb-2">
+        <p className="font-semibold">{exp.role} @ {exp.company}</p>
+        <ul className="list-disc ml-5 text-sm">
+          {exp.description.map((d, j) => <li key={j}>{d}</li>)}
+        </ul>
+      </div>
+    ))}
+
+    <h3 className="font-semibold mt-4">Projects</h3>
+    {generatedCV?.projects?.map((proj, i) => (
+      <div key={i} className="mb-2">
+        <p className="font-semibold">{proj.title}</p>
+        <ul className="list-disc ml-5 text-sm">
+          {proj.description.map((d, j) => <li key={j}>{d}</li>)}
+        </ul>
+      </div>
+    ))}
+
+    <h3 className="font-semibold mt-4">Skills & Tools</h3>
+    <p>{generatedCV?.skills?.join(", ")} | {generatedCV?.tools?.join(", ")}</p>
+
+    <h3 className="font-semibold mt-4">Recommendations</h3>
+    <ul className="list-disc ml-5 text-sm">
+      {generatedCV?.recommendations?.map((r, i) => <li key={i}>{r}</li>)}
+    </ul>
+
+    <button
+      onClick={() => window.print()}
+      className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg"
+    >
+      Print / Save as PDF
+    </button>
+  </div>
+)}
+
+      
     </div>
   );
 };
