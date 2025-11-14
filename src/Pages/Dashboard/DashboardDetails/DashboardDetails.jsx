@@ -15,12 +15,31 @@ const DashboardDetails = () => {
   const [recommendedJobs, setRecommendedJobs] = useState([]);
   const [recentApplications, setRecentApplications] = useState([]);
   const [learningResources, setLearningResources] = useState([]);
+  // NEW STATE: To store resources recommended for a skill gap
+  const [skillGapRecommendations, setSkillGapRecommendations] = useState({}); // { jobId: [{resource}] }
   const { user, setUser } = useAuth();
+
+  // Helper function to fetch learning resources for a specific job's skill gap
+  const fetchSkillGapResources = async (jobId, missingSkills) => {
+    if (missingSkills.length === 0) return;
+
+    try {
+      const res = await axiosPublic.post(
+        "/api/jobs/skill-gap-recommendations",
+        { missingSkills: missingSkills }
+      );
+      setSkillGapRecommendations(prev => ({
+        ...prev,
+        [jobId]: res.data.slice(0, 3) // Store up to 3 resources per job
+      }));
+    } catch (err) {
+      console.error(`Error fetching skill gap resources for ${jobId}:`, err);
+    }
+  };
 
   // Fetch jobs using the new recommendation endpoint
   const fetchJobs = async () => {
     try {
-      // Calling the comprehensive recommendation endpoint which now handles scoring and filtering
       const res = await axiosPublic.get("/api/jobs/recommend");
 
       if (user) {
@@ -29,10 +48,17 @@ const DashboardDetails = () => {
         setRecommendedJobs(recommendedJobsWithScores);
         setStats((prev) => [
           { ...prev[0], number: user.recentApplications?.length || 0 },
-          // Update job matches count based on the new recommended list length
           { ...prev[1], number: recommendedJobsWithScores.length },
           prev[2],
         ]);
+        
+        // NEW LOGIC: Fetch resources for skill gaps in partial matches (e.g., match < 80%)
+        recommendedJobsWithScores.forEach(job => {
+            if (job.matchPercentage < 80 && job.missingSkills && job.missingSkills.length > 0) {
+                // Pass the job's MongoDB ID as a key
+                fetchSkillGapResources(job._id, job.missingSkills); 
+            }
+        });
       }
     } catch (err) {
       console.error("Error fetching recommended jobs:", err);
@@ -43,8 +69,7 @@ const DashboardDetails = () => {
   const fetchLearning = async () => {
     try {
       if (user && user.skills) {
-        // NOTE: If you want to use the BE's /api/learning/recommend, you need to update this call and logic.
-        // Keeping the original FE filter for learning for now.
+        // NOTE: Using the original endpoint for user's existing skills recommendation
         const res = await axiosPublic.get("/api/learning", {
           params: { skill: user.skills.join("|") },
         });
@@ -103,7 +128,11 @@ const DashboardDetails = () => {
         <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
           <h3 className="text-xl font-bold mb-4 text-gray-800">Recommended Jobs</h3>
           <ul className="space-y-3">
-            {recommendedJobs.map((job, index) => (
+            {recommendedJobs.map((job, index) => {
+                const isPartialMatch = job.matchPercentage < 80 && job.missingSkills?.length > 0;
+                const gapResources = skillGapRecommendations[job._id];
+
+                return (
               <li
                 key={index}
                 className="p-4 border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-[#0fb894]/80"
@@ -131,6 +160,44 @@ const DashboardDetails = () => {
                   ))}
                 </ul>
 
+                {/* NEW FEATURE: Skill Gap and Resource Recommendation for Partial Matches */}
+                {isPartialMatch && (
+                    <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-sm font-bold text-red-700 mb-1">
+                            ⚠️ Skill Gap Identified
+                        </p>
+                        <p className="text-xs text-red-600 mb-2">
+                            Missing Skills: <span className="font-semibold">{job.missingSkills.join(", ")}</span>
+                        </p>
+                        {gapResources?.length > 0 && (
+                            <>
+                                <p className="text-xs font-bold text-red-700 mb-1">
+                                    Recommended Learning Resources:
+                                </p>
+                                <ul className="list-disc list-inside space-y-0.5 text-xs text-red-500 ml-2">
+                                    {gapResources.map((res, rIndex) => (
+                                        <li key={rIndex}>
+                                            <a 
+                                                href={res.url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="hover:underline font-medium"
+                                            >
+                                                {res.title}
+                                            </a> 
+                                            <span className="text-red-400"> (Covers: {res.relevantMissingSkills.join(", ")})</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+                        {gapResources?.length === 0 && (
+                            <p className="text-xs text-red-600 italic">No specific learning resources found for this gap yet.</p>
+                        )}
+                    </div>
+                )}
+                {/* END NEW FEATURE */}
+
                 {/* External Platforms Links */}
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <p className="text-sm font-semibold text-gray-700 mb-1">
@@ -151,7 +218,8 @@ const DashboardDetails = () => {
                   </div>
                 </div>
               </li>
-            ))}
+            );
+            })}
             {recommendedJobs.length === 0 && (
                 <li className="p-4 text-center text-gray-500 italic">No strong job matches found. Complete your profile for better results!</li>
             )}
