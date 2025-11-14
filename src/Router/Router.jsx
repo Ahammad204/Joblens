@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Main/MainLayout";
-import Home from "../Pages/Home/Home/Home";
+
 import Login from "../componet/Shared/Login/login";
 import Register from "../componet/Shared/Register/Register";
 import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
@@ -10,49 +10,80 @@ import UserProfile from "../Pages/Dashboard/UserProfile/UserProfile";
 import AllJobs from "../Pages/AllJobs/AllJobs";
 import AllJobsDetails from "../Pages/AllJobsDetails/AllJobsDetails";
 import AllResources from "../Pages/AllResources/AllResources";
+import Home from "../Pages/Home/Home/Home";
+import CVAutoAnalysis from "../Pages/Dashboard/ProfileAnysis/CVAutoAnalysis";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout></MainLayout>,
-    children:[
+    children: [
       {
-        path:"/",
-        element:<Home></Home>
-      },{
-        path:"/allJobs",
-        element:<PrivateRoute><AllJobs></AllJobs></PrivateRoute>
-      },{
-        path:"/jobs/:id",
-        element:<PrivateRoute><AllJobsDetails></AllJobsDetails></PrivateRoute>
-      },{
-        path:"/allResources",
-        element:<PrivateRoute><AllResources></AllResources></PrivateRoute>
-      }
-    ]
+        path: "/",
+        element: <Home></Home>,
+      },
+      {
+        path: "/allJobs",
+        element: (
+          <PrivateRoute>
+            <AllJobs></AllJobs>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/jobs/:id",
+        element: (
+          <PrivateRoute>
+            <AllJobsDetails></AllJobsDetails>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/allResources",
+        element: (
+          <PrivateRoute>
+            <AllResources></AllResources>
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
-    {
-      path:"/login",
-      element: <Login></Login>
-    }
-  ,
-    {
-      path:"/register",
-      element: <Register></Register>
-    }
-  ,
-    {
-      path:"/dashboard",
-      element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
-      children:[
-        {
-          path:"/dashboard",
-          element:<PrivateRoute><DashboardDetails></DashboardDetails></PrivateRoute>
-        },{
-          path:"/dashboard/userprofile",
-          element:<PrivateRoute><UserProfile></UserProfile></PrivateRoute>
-        }
-      ]
-    }
+  {
+    path: "/login",
+    element: <Login></Login>,
+  },
+  {
+    path: "/register",
+    element: <Register></Register>,
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <Dashboard></Dashboard>
+      </PrivateRoute>
+    ),
+    children: [
+      {
+        path: "/dashboard",
+        element: (
+          <PrivateRoute>
+            <DashboardDetails></DashboardDetails>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/userprofile",
+        element: (
+          <PrivateRoute>
+            <UserProfile></UserProfile>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/auto-cv-analysis",
+        element: <CVAutoAnalysis />,
+      },
+    ],
+  },
 ]);
- 

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import axiosPublic from "../../utils/axiosPublic";
-import { Search } from "lucide-react";
+
 
 
 const AllResources = () => {
@@ -66,7 +66,7 @@ const AllResources = () => {
         {/* Search & Filters */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <div className="flex items-center bg-white p-2 rounded shadow w-full sm:w-1/2">
-            <Search className="mr-2 text-gray-400" size={18} />
+            {/* <searchTerm className="mr-2 text-gray-400" size={18} /> */}
             <input
               type="text"
               placeholder="Search by title or skill..."

@@ -1,10 +1,18 @@
 import React from 'react';
+import Banner from '../Banner/Banner';
+
 
 const Home = () => {
     return (
-        <div>
-            
-        </div>
+        <>
+           <Banner></Banner>
+           {/* <Category></Category> */}
+           {/* <FeaturedSection></FeaturedSection> */}
+           {/* <CallToAction></CallToAction> */}
+           {/* <Review></Review> */}
+           
+           {/* <ContactUs></ContactUs> */}
+        </>
     );
 };
 

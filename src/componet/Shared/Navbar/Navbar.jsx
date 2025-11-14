@@ -59,7 +59,7 @@ const Navbar = () => {
             {navLink}
           </ul>
         </div>
-        <img className="w-60 h-14" src={logo} alt="logo" />
+        <img className="w-24 h-8 lg:w-44 lg:h-10" src={logo} alt="logo" />
       </div>
 
       {/* Center */}
