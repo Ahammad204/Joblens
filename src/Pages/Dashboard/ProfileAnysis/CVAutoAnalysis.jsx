@@ -1,94 +1,144 @@
 import { useState, useEffect } from "react";
 import useAuth from "../../../Hooks/useAuth";
-import { analyzeCV } from "../../../utils/skillExtractor";
 import Loading from "../../../componet/Shared/Loading/Loading";
-import { useRef } from "react";
-
-
-
+import axiosPublic from "../../../utils/axiosPublic";
+import { analyzeCV } from "../../../utils/skillExtractor";
 
 const CVAutoAnalysis = () => {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
-  const hasAnalyzed = useRef(false);
+  const [reanalyzing, setReanalyzing] = useState(false);
 
-useEffect(() => {
-  if (!user?.resume) return;
+  const fetchAnalysis = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosPublic.get("/api/me", { withCredentials: true });
+      const userData = res.data.user;
 
-  // stop duplicate calls
-  if (hasAnalyzed.current) return;
-  hasAnalyzed.current = true;
-
-  const runAnalysis = async () => {
-    const analysis = await analyzeCV(user.resume);
-    setResult(analysis);
-    setLoading(false);
+      if (userData.skills && userData.tools && userData.roles && userData.cvAnalysis) {
+        // Already analyzed
+        setResult({
+          skills: userData.skills,
+          tools: userData.tools,
+          roles: userData.roles,
+          explain: userData.cvAnalysis.explain,
+        });
+      } else {
+        // No analysis yet
+        setResult(null);
+      }
+    } catch (err) {
+      console.error("Fetch User Error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  runAnalysis();
-}, [user?.resume]);
+  const runAnalysis = async () => {
+    if (!user?.resume) return;
 
+    try {
+      setReanalyzing(true);
+      const analysis = await analyzeCV(user.resume);
 
-  if (loading) return <Loading></Loading>;
+      // Save to database
+      await axiosPublic.post(
+        "/api/cv/save",
+        {
+          skills: analysis.skills,
+          tools: analysis.tools,
+          roles: analysis.roles,
+          explain: analysis.explain,
+        },
+        { withCredentials: true }
+      );
 
-  if (result?.error) return <p className="text-red-500">{result.error}</p>;
+      setResult(analysis);
+    } catch (err) {
+      console.error("CV Analysis Save Error:", err);
+    } finally {
+      setReanalyzing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalysis();
+  }, [user?.resume]);
+
+  if (loading) return <Loading />;
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg border">
-      <h2 className="text-2xl font-semibold mb-4">Resume Skill Extraction</h2>
+    <div className="max-w-4xl mx-auto p-8 bg-gradient-to-r from-white to-gray-50 shadow-lg rounded-xl border border-gray-200">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-3">
+        Resume Skill Extraction
+      </h2>
 
-      <div className="mb-4">
-        <p className="font-medium">Skills:</p>
-        <div className="flex flex-wrap gap-2">
-          {result.skills.map((s, i) => (
-            <EditableTag key={i} text={s} />
-          ))}
-        </div>
-      </div>
+      {!result ? (
+        <>
+          <p className="text-gray-500 mb-4 text-center">
+            No analysis yet.
+          </p>
+          <button
+            onClick={runAnalysis}
+            disabled={reanalyzing}
+            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full font-semibold transition-colors"
+          >
+            {reanalyzing ? "Analyzing..." : "Analyze CV"}
+          </button>
+        </>
+      ) : (
+        <>
+          <Section title="Skills" items={result.skills} />
+          <Section title="Tools" items={result.tools} />
+          <Section title="Roles" items={result.roles} />
 
-      <div className="mb-4">
-        <p className="font-medium">Tools:</p>
-        <div className="flex flex-wrap gap-2">
-          {result.tools.map((t, i) => (
-            <EditableTag key={i} text={t} />
-          ))}
-        </div>
-      </div>
+          <p className="text-gray-500 mt-6 text-sm leading-relaxed">
+            {result.explain}
+          </p>
 
-      <div>
-        <p className="font-medium">Roles:</p>
-        <div className="flex flex-wrap gap-2">
-          {result.roles.map((r, i) => (
-            <EditableTag key={i} text={r} />
-          ))}
-        </div>
-      </div>
-
-      <p className="text-sm mt-4 text-gray-500">
-        {result.explain}
-      </p>
+          <button
+            onClick={runAnalysis}
+            disabled={reanalyzing}
+            className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full font-semibold transition-colors"
+          >
+            {reanalyzing ? "Re-analyzing..." : "Re-analyze CV"}
+          </button>
+        </>
+      )}
     </div>
   );
 };
 
-// Small reusable editable tag component
+// Reusable section for Skills, Tools, Roles
+const Section = ({ title, items }) => (
+  <div className="mb-6">
+    <p className="font-semibold text-gray-700 mb-2">{title}:</p>
+    <div className="flex flex-wrap gap-3">
+      {items.map((item, i) => (
+        <EditableTag key={i} text={item} />
+      ))}
+    </div>
+  </div>
+);
+
+// Editable tag with modern styling
 const EditableTag = ({ text }) => {
   const [value, setValue] = useState(text);
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="bg-[#f72b2e]/20 px-3 py-1 rounded-full flex items-center gap-2">
+    <div className="bg-red-100 hover:bg-red-200 transition-colors px-4 py-1 rounded-full flex items-center gap-2 cursor-pointer shadow-sm">
       {editing ? (
         <input
-          className="bg-transparent outline-none"
+          className="bg-transparent outline-none text-red-700 font-medium"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => setEditing(false)}
           autoFocus
         />
       ) : (
-        <span onClick={() => setEditing(true)} className="cursor-pointer">
+        <span onClick={() => setEditing(true)} className="text-red-700 font-medium">
           {value}
         </span>
       )}
