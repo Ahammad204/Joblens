@@ -17,30 +17,25 @@ const DashboardDetails = () => {
   const [learningResources, setLearningResources] = useState([]);
   const { user, setUser } = useAuth();
 
-  // Fetch jobs and filter by user skills
+  // Fetch jobs using the new recommendation endpoint
   const fetchJobs = async () => {
     try {
-      const res = await axiosPublic.get("/api/jobs");
-      if (user) {
-        const userSkills = user.skills || [];
-        const matchedJobs = res.data
-          .map((job) => {
-            const matches = job.skills.filter((skill) =>
-              userSkills.includes(skill)
-            );
-            return matches.length ? { ...job, matchSkills: matches } : null;
-          })
-          .filter(Boolean);
+      // Calling the comprehensive recommendation endpoint which now handles scoring and filtering
+      const res = await axiosPublic.get("/api/jobs/recommend");
 
-        setRecommendedJobs(matchedJobs);
+      if (user) {
+        const recommendedJobsWithScores = res.data;
+
+        setRecommendedJobs(recommendedJobsWithScores);
         setStats((prev) => [
           { ...prev[0], number: user.recentApplications?.length || 0 },
-          { ...prev[1], number: matchedJobs.length },
+          // Update job matches count based on the new recommended list length
+          { ...prev[1], number: recommendedJobsWithScores.length },
           prev[2],
         ]);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching recommended jobs:", err);
     }
   };
 
@@ -48,6 +43,8 @@ const DashboardDetails = () => {
   const fetchLearning = async () => {
     try {
       if (user && user.skills) {
+        // NOTE: If you want to use the BE's /api/learning/recommend, you need to update this call and logic.
+        // Keeping the original FE filter for learning for now.
         const res = await axiosPublic.get("/api/learning", {
           params: { skill: user.skills.join("|") },
         });
@@ -59,7 +56,7 @@ const DashboardDetails = () => {
         ]);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching learning resources:", err);
     }
   };
 
@@ -88,7 +85,6 @@ const DashboardDetails = () => {
           Go to Profile
         </button>
       </div>
-
       {/* Stats Cards */}
       <div className="grid md:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
@@ -101,33 +97,73 @@ const DashboardDetails = () => {
           </div>
         ))}
       </div>
-
       {/* Recommended Jobs, Recent Applications, Learning Resources */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Recommended Jobs */}
+        {/* Recommended Jobs (UPDATED DISPLAY) */}
         <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
           <h3 className="text-xl font-bold mb-4 text-gray-800">Recommended Jobs</h3>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {recommendedJobs.map((job, index) => (
               <li
                 key={index}
-                className="p-3 border rounded-lg hover:bg-[#0fb894] hover:text-white transition-colors duration-200 cursor-pointer"
+                className="p-4 border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-[#0fb894]/80"
               >
-                <p className="font-semibold">{job.title}</p>
-                <p className="text-gray-500 text-sm">{job.company}</p>
-                <p className="text-gray-400 text-xs">
-                  Matches: {job.matchSkills.join(", ")}
+                <div className="flex justify-between items-start mb-2">
+                  <p className="font-bold text-lg text-gray-800">
+                    {job.title} at {job.company}
+                  </p>
+                  <span className={`text-white font-bold text-sm px-3 py-1 rounded-full whitespace-nowrap ${job.matchPercentage > 70 ? 'bg-green-600' : job.matchPercentage > 50 ? 'bg-yellow-600' : 'bg-gray-500'}`}>
+                    {job.matchPercentage}% Match
+                  </span>
+                </div>
+                <p className="text-gray-600 text-sm mb-2 font-medium">
+                  Key Reasons:
                 </p>
+                <ul className="list-disc list-inside space-y-0.5 text-sm text-gray-500 ml-2">
+                  {/* Displaying reasons, using dangerouslySetInnerHTML to render bold text from the backend */}
+                  {job.keyReasons.slice(0, 3).map((reason, rIndex) => (
+                    <li
+                      key={rIndex}
+                      dangerouslySetInnerHTML={{
+                        __html: reason.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+                      }}
+                    />
+                  ))}
+                </ul>
+
+                {/* External Platforms Links */}
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <p className="text-sm font-semibold text-gray-700 mb-1">
+                    Check/Apply on:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {job.platforms && job.platforms.map((platform, pIndex) => (
+                      <a
+                        key={pIndex}
+                        href={platform.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors duration-150"
+                      >
+                        {platform.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
               </li>
             ))}
+            {recommendedJobs.length === 0 && (
+                <li className="p-4 text-center text-gray-500 italic">No strong job matches found. Complete your profile for better results!</li>
+            )}
           </ul>
         </div>
-
         {/* Right Column: Recent Applications + Learning Resources */}
         <div className="space-y-6">
-          {/* Recent Applications */}
+          {/* Recent Applications (UNCHANGED) */}
           <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
-            <h3 className="text-xl font-bold mb-4 text-gray-800">Recent Applications</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Recent Applications
+            </h3>
             <ul className="space-y-2">
               {recentApplications.map((app, index) => (
                 <li
@@ -140,32 +176,31 @@ const DashboardDetails = () => {
               ))}
             </ul>
           </div>
-
-          {/* Recommended Learning Resources */}
-         {/* Recommended Learning Resources */}
-<div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
-  <h3 className="text-xl font-bold mb-4 text-gray-800">Recommended Learning Resources</h3>
-  <ul className="space-y-2">
-    {learningResources.map((res, index) => {
-      const matchedSkills = (res.skills || []).filter(skill =>
-        (user.skills || []).includes(skill)
-      );
-      return (
-        <li
-          key={index}
-          className="p-3 border rounded-lg hover:bg-[#0fb894] hover:text-white transition-colors duration-200 cursor-pointer"
-        >
-          <p className="font-semibold">{res.title}</p>
-          <p className="text-gray-500 text-sm">{res.provider}</p>
-          <p className="text-gray-400 text-xs">
-            Matches: {matchedSkills.join(", ") || "None"}
-          </p>
-        </li>
-      );
-    })}
-  </ul>
-</div>
-
+          {/* Recommended Learning Resources (UNCHANGED) */}
+          <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Recommended Learning Resources
+            </h3>
+            <ul className="space-y-2">
+              {learningResources.map((res, index) => {
+                const matchedSkills = (res.relatedSkills || []).filter(
+                  (skill) => (user?.skills || []).includes(skill)
+                );
+                return (
+                  <li
+                    key={index}
+                    className="p-3 border rounded-lg hover:bg-[#0fb894] hover:text-white transition-colors duration-200 cursor-pointer"
+                  >
+                    <p className="font-semibold">{res.title}</p>
+                    <p className="text-gray-500 text-sm">{res.platform}</p>
+                    <p className="text-gray-400 text-xs">
+                      Matches: {matchedSkills.join(", ") || "None"}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
