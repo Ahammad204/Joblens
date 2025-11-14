@@ -4,6 +4,8 @@ import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../componet/Shared/Loading/Loading";
 import axiosPublic from "../../../utils/axiosPublic";
 import { analyzeCV } from "../../../utils/skillExtractor";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import CVDocument from "../../../componet/CVDocument/CVDocument";
 
 // --- Utility Components for Editing ---
 
@@ -361,12 +363,16 @@ const generateCV = async () => {
       {generatedCV?.recommendations?.map((r, i) => <li key={i}>{r}</li>)}
     </ul>
 
-    <button
-      onClick={() => window.print()}
-      className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg"
-    >
-      Print / Save as PDF
-    </button>
+
+
+<PDFDownloadLink
+  document={<CVDocument cv={generatedCV} />}
+  fileName={`${generatedCV.personalInfo.name}_CV.pdf`}
+  className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg"
+>
+  {({ loading }) => (loading ? "Generating PDF..." : "Download PDF")}
+</PDFDownloadLink>
+
   </div>
 )}
 
