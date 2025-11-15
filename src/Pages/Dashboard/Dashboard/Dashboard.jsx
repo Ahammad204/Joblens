@@ -37,6 +37,11 @@ const [isAdmin, isAdminLoading] = useAdmin();
                 <FaHome /> Manage Jobs
               </NavLink>
             </li>
+         <li>
+              <NavLink to="/dashboard/manageResources" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
+                <FaHome /> Manage Resources
+              </NavLink>
+            </li>
             
             
             </>

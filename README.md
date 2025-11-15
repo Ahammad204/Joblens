@@ -1,170 +1,90 @@
-# AI-Powered Job & Learning Recommendation Dashboard
+# Joblens - AI-Powered Job & Learning Platform
 
-## Project Overview
-This project is a dashboard that recommends jobs and learning resources based on a user’s skills and career track. Users can register, log in, view personalized job/resource matches, track their applications, and monitor learning progress. The system provides transparent, rule-based recommendations for jobs and learning resources.
+Joblens is a modern, AI-driven web application designed to bridge the gap between job seekers and opportunities. It provides personalized job and learning resource recommendations, AI-powered career roadmap generation, and automated CV analysis to help users navigate their career paths effectively.
 
-## Tech Stack
-- **Frontend:** React, Tailwind CSS, React Router
-- **Backend:** Node.js, Express
-- **Database:** MongoDB
-- **Authentication:** JWT, bcrypt
-- **API Requests:** Axios
-- **Other Libraries:** Cookie-parser, CORS
+## ✨ Features
 
-## Features
-- User registration and login with JWT-based authentication.
-- Profile management (skills, experience, career track, preferences).
-- Dashboard displaying:
-  - Personalized recommended jobs
-  - Recommended learning resources
-  - Active applications
-  - Learning progress
-- Searchable, filterable, and interactive lists.
-- Rule-based recommendation engine (non-AI):
-  - Matches jobs/resources based on overlapping skills and career track.
-  - Shows why a job/resource is recommended (e.g., “Matches: JavaScript, HTML”).
+- **User Authentication:** Secure registration and login with JWT-based authentication.
+- **Personalized Dashboard:** A central hub for users to view recommended jobs, learning resources, and track their career progress.
+- **AI-Powered Recommendations:**
+  - **Job Matching:** Recommends jobs based on a user's skills, experience, and career track, complete with a match score and reasoning.
+  - **Skill Gap Analysis:** Identifies missing skills for a desired job and suggests relevant learning resources to fill the gaps.
+- **Dynamic Job & Resource Search:** Users can search, filter, and browse extensive lists of jobs and learning materials.
+- **AI Career Roadmap:** Generates a personalized, step-by-step learning plan to help users achieve their career goals.
+- **CV Auto-Analysis:** Automatically extracts and summarizes skills, tools, and roles from a user's resume.
+- **AI-Generated CV:** Creates a professional CV layout based on the user's profile data, which can be downloaded as a PDF.
+- **Admin Dashboard:** Special interface for administrators to manage job listings.
+- **Floating AI Chatbot:** An integrated career assistant to answer user queries in real-time.
 
-## Backend Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Ahammad204/JoblensServer.git
-   cd JoblensServer
-````
+## 🛠️ Tech Stack
 
-2. Install dependencies:
+- **Frontend:** React (with Vite), React Router
+- **Styling:** Tailwind CSS with DaisyUI
+- **State Management & Data Fetching:** TanStack Query (React Query) & Axios
+- **UI Components:** Lottie for animations, Lucide React for icons
+- **PDF Generation:** `@react-pdf/renderer` for client-side PDF creation.
 
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the backend folder and add:
+## 🚀 Getting Started
 
-   ```env
-   PORT=5000
-   MONGODB=<your-mongodb-connection-string>
-   JWT_SECRET=<your-jwt-secret>
-   ```
-4. Seed initial data (optional but recommended for testing):
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-   * **Seed Jobs:**
+### Prerequisites
 
-     ```bash
-     POST http://localhost:5000/api/jobs/seed
-     ```
-   * **Seed Learning Resources:**
+- Node.js (v18 or higher)
+- npm or yarn
 
-     ```bash
-     POST http://localhost:5000/api/learning/seed
-     ```
-5. Run the backend server:
+### Installation
 
-   ```bash
-   npm run dev
-   ```
-6. Backend will run on `http://localhost:5000`.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Ahammad204/Joblens.git
+    cd Joblens
+    ```
 
-## Frontend Setup
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-1. Navigate to the frontend folder:
+3.  **Set up environment variables:**
 
-   ```bash
-   git clone https://github.com/Ahammad204/Joblens.git
-   cd Joblens
-   ```
-2. Install dependencies:
+    Create a `.env` file in the root of the `Joblens` directory and add the following variables. This file is ignored by Git.
 
-   ```bash
-   npm install
-   ```
-3. Configure environment variables (optional):
+    ```env
+    # The base URL for the backend server
+    VITE_API_BASE_URL=http://localhost:5000
 
-   * Create a `.env` file in the frontend folder.
-   * Example:
+    # API key from ImgBB for image uploads (used in registration)
+    VITE_IMGBB_KEY=<your_imgbb_api_key>
+    ```
 
-     ```env
-     VITE_API_URL=http://localhost:5000
-     ```
-   * This allows Axios to use `VITE_API_URL` as the base URL for API requests.
-4. Run the frontend development server:
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173`.
 
-   ```bash
-   npm run dev
-   ```
-5. Open your browser at:
+## 📜 Available Scripts
 
-   ```
-   http://localhost:5173
-   ```
-6. The frontend will automatically hot-reload on code changes.
+In the project directory, you can run:
 
-## Environment Configuration Notes
+- `npm run dev`: Runs the app in development mode.
+- `npm run build`: Builds the app for production to the `dist` folder.
+- `npm run lint`: Lints the codebase using ESLint.
+- `npm run preview`: Serves the production build locally for preview.
 
-* Axios calls in the frontend should use the backend URL (`VITE_API_URL` or `http://localhost:5000`).
-* Cookies are `httpOnly` and `sameSite: 'none'` for cross-origin support; ensure frontend and backend run on compatible domains/ports.
-* JWT secret should be strong and unique to secure authentication.
+## 🚢 Deployment
 
-## Seed Data Usage
+This is a standard Vite-based React application. To deploy, follow these steps:
 
-* **Jobs:** Use `/api/jobs/seed` to populate the database with sample jobs.
-* **Learning Resources:** Use `/api/learning/seed` to populate sample learning resources.
-* These seed endpoints are for development/testing and should not be used in production.
+1.  **Build the project:**
+    ```bash
+    npm run build
+    ```
+2.  **Deploy the `dist` folder:**
+    The contents of the generated `dist` folder can be deployed to any static hosting service, such as:
+    - [Vercel](https://vercel.com/)
+    - [Netlify](https://www.netlify.com/)
+    - [GitHub Pages](https://pages.github.com/)
 
-## Recommendation Logic
-
-* Non-AI, rule-based matching.
-* **Jobs:** Recommended if a job shares at least one skill with the user’s profile and optionally matches the selected career track.
-* **Learning Resources:** Recommended if a resource teaches a skill that the user has or wants to learn.
-* Recommendations include a transparent explanation, e.g., “Matches: React, HTML, CSS.”
-* Users can filter/search recommendations by skill, platform, or cost.
-
-## API Endpoints
-
-### Authentication
-
-* `POST /api/register` – Register a new user.
-* `POST /api/login` – Login user.
-* `POST /api/logout` – Logout user.
-* `GET /api/me` – Get current logged-in user details.
-
-### Users
-
-* `PATCH /users/:id` – Update user profile (requires JWT).
-
-### Jobs
-
-* `GET /api/jobs` – Get all jobs.
-* `GET /api/jobs/:id` – Get job by ID.
-* `POST /api/jobs/seed` – Seed sample jobs.
-* `POST /api/jobs` – Add a new job (requires JWT).
-
-### Learning Resources
-
-* `GET /api/learning` – Get all learning resources (supports query filters).
-* `GET /api/learning/:id` – Get a resource by ID.
-* `POST /api/learning/seed` – Seed sample learning resources.
-
-## Folder Structure
-
-```
-backend/
-  ├─ index.js
-  ├─ package.json
-  └─ .env
-frontend/
-  ├─ src/
-      ├─ components/
-      ├─ pages/
-      ├─ App.jsx
-      └─ main.jsx
-  ├─ package.json
-  └─ vite.config.js
-```
-
-## Future Enhancements
-
-* AI-based recommendation engine.
-* Role-based dashboard customization (admin, mentor, user).
-* Notifications for new job/resource matches.
-* Analytics for job applications and learning progress.
-
-
-```
+    Ensure you configure the environment variables (`VITE_API_BASE_URL`, `VITE_IMGBB_KEY`) in your hosting provider's settings.
