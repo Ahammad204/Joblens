@@ -16,6 +16,7 @@ import Roadmap from "../Pages/Dashboard/Roadmap/Roadmap";
 import Chatbot from "../componet/chatbot/Chatbot";
 import ManageJobs from "../Pages/Dashboard/ManageJobs/ManageJobs";
 import ManageResources from "../Pages/Dashboard/ManageResources/ManageResources";
+import AdminDashboard from "../Pages/Dashboard/Admin/AdminDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -100,6 +101,10 @@ export const router = createBrowserRouter([
       ,{
         path:"/dashboard/manageResources",
         element: <PrivateRoute><ManageResources></ManageResources></PrivateRoute>
+      }
+      ,{
+        path:"/dashboard/admin/dashboard",
+        element: <PrivateRoute><AdminDashboard></AdminDashboard></PrivateRoute>
       }
     ],
   },

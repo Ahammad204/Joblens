@@ -127,9 +127,12 @@ const Roadmap = () => {
 
                 <div className="mb-8">
                     <h3 className="text-xl font-bold text-gray-700 mb-2">Your Current Skills</h3>
-                    <p className="text-sm text-gray-500 italic">
-                        {currentSkills?.length > 0 ? currentSkills.join(', ') : 'No skills provided in profile.'}
-                    </p>
+               <p className="text-sm text-gray-500 italic">
+  {Array.isArray(currentSkills) && currentSkills.length > 0
+    ? currentSkills.join(', ')
+    : 'No skills provided in profile.'}
+</p>
+
                 </div>
 
                 {/* Timeline / Phases Section */}

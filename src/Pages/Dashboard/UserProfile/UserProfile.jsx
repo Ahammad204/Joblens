@@ -249,7 +249,7 @@ const UserProfile = () => {
 
         {/* Resume */}
         <div className="flex flex-col">
-          <label className="font-semibold flex items-center gap-2"><FaClipboard /> Resume (Paste Text or URL)</label>
+          <label className="font-semibold flex items-center gap-2"><FaClipboard /> Resume (Paste Text )</label>
           <textarea
             name="resume"
             value={formData.resume}

@@ -1,8 +1,10 @@
-import useAuth from "../../../Hooks/useAuth";
+
 import { FaHandHoldingMedical, FaHome, FaUsers, FaTasks, FaBoxOpen } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router-dom";
 import useAdmin from "../../../Hooks/useAdmin";
+import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../componet/Shared/Loading/Loading";
+
 // import { useState } from "react";
 
 const Dashboard = () => {
@@ -19,7 +21,7 @@ const [isAdmin, isAdminLoading] = useAdmin();
 
     <div className="min-h-screen ">
       {/* Navbar */}
-      <div className="bg-[#0fb894] text-white shadow-md">
+      <div className="bg-gradient-to-r from-green-400 to-teal-500 text-white shadow-md">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           {/* Logo */}
           {/* <NavLink to="/"><img className="w-24 h-8 lg:w-44 lg:h-10" src={logo} alt="logo" /></NavLink> */}

@@ -97,7 +97,7 @@ const FloatingChat = () => {
 
   {typing && (
     <div className="w-20 p-2 bg-gray-200 rounded-xl text-xs font-medium animate-pulse">
-      Typing...
+      
     </div>
   )}
   <div ref={chatEndRef} />
