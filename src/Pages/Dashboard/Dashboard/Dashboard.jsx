@@ -1,6 +1,8 @@
 import useAuth from "../../../Hooks/useAuth";
 import { FaHandHoldingMedical, FaHome, FaUsers, FaTasks, FaBoxOpen } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router-dom";
+import useAdmin from "../../../Hooks/useAdmin";
+import Loading from "../../../componet/Shared/Loading/Loading";
 // import { useState } from "react";
 
 const Dashboard = () => {
@@ -8,7 +10,10 @@ const Dashboard = () => {
 //   const [createDropdown, setCreateDropdown] = useState(false);
   const navItemClasses =
     "flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#f72b2e]/20 transition-colors duration-200 font-medium";
-
+const [isAdmin, isAdminLoading] = useAdmin();
+  if(isAdminLoading ){
+    return <Loading></Loading>
+  }
 
   return (
 
@@ -18,12 +23,26 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           {/* Logo */}
           {/* <NavLink to="/"><img className="w-24 h-8 lg:w-44 lg:h-10" src={logo} alt="logo" /></NavLink> */}
+   
          <NavLink to="/" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
                  JobLense
               </NavLink>
 
           {/* Nav Links */}
           <ul className="hidden md:flex items-center gap-2">
+                    {isAdmin ? (
+            <>
+         <li>
+              <NavLink to="/dashboard/manageJobs" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
+                <FaHome /> Manage Jobs
+              </NavLink>
+            </li>
+            
+            
+            </>
+          ) : (
+            <></>
+          )}
             <li>
               <NavLink to="/dashboard" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
                 <FaHome /> Home

@@ -1,16 +1,13 @@
 import React from 'react';
 import Banner from '../Banner/Banner';
+import Hilight from '../Highlight/Hilight';
 
 
 const Home = () => {
     return (
         <>
            <Banner></Banner>
-           {/* <Category></Category> */}
-           {/* <FeaturedSection></FeaturedSection> */}
-           {/* <CallToAction></CallToAction> */}
-           {/* <Review></Review> */}
-           
+            <Hilight></Hilight>
            {/* <ContactUs></ContactUs> */}
         </>
     );

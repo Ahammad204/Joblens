@@ -14,6 +14,7 @@ import Home from "../Pages/Home/Home/Home";
 import CVAutoAnalysis from "../Pages/Dashboard/ProfileAnysis/CVAutoAnalysis";
 import Roadmap from "../Pages/Dashboard/Roadmap/Roadmap";
 import Chatbot from "../componet/chatbot/Chatbot";
+import ManageJobs from "../Pages/Dashboard/ManageJobs/ManageJobs";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +92,9 @@ export const router = createBrowserRouter([
       },{
         path:"/dashboard/roadmap",
         element: <Roadmap></Roadmap>
+      },{
+        path:"/dashboard/manageJobs",
+        element: <PrivateRoute><ManageJobs></ManageJobs></PrivateRoute>
       }
     ],
   },
