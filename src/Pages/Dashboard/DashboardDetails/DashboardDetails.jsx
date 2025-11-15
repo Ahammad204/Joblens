@@ -157,7 +157,7 @@ useEffect(() => {
             // 1. View Roadmap Button (Visible if roadmap exists)
             <button
               onClick={() => navigate("/dashboard/roadmap")}
-              className="bg-purple-600 text-white px-6 py-2 rounded-lg cursor-pointer font-semibold hover:bg-purple-700 transition-colors duration-200"
+              className="bg-[#41b39d] text-white px-6 py-2 rounded-lg cursor-pointer font-semibold  transition-colors duration-200"
               disabled={isGenerating}
             >
               View Current Roadmap
@@ -175,7 +175,7 @@ useEffect(() => {
                 ? 'bg-gray-400 text-white cursor-not-allowed'
                 : roadmap
                   ? 'bg-blue-500 text-white hover:bg-blue-600' // Different color for 'Generate New'
-                  : 'bg-purple-600 text-white hover:bg-purple-700' // Original color for 'Generate'
+                  : 'bg-[#41b39d] text-white hover:bg-purple-700' // Original color for 'Generate'
             }`}
             disabled={isGenerating}
           >

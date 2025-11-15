@@ -81,7 +81,7 @@ const ManageResources = () => {
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Manage Resources</h2>
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600"
+        className="bg-[#41b39d] text-white px-4 py-2 rounded mb-4 hover:bg-blue-600"
         onClick={() => setShowModal(true)}
       >
         Create Resource

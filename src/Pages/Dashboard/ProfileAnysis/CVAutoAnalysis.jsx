@@ -222,8 +222,8 @@ const generateCV = async () => {
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-2xl rounded-xl border border-gray-100">
-      <h2 className="text-4xl font-extrabold mb-8 text-red-600 border-b pb-4">
-        <span role="img" aria-label="profile">👤</span> Your Profile
+      <h2 className="text-4xl font-extrabold mb-8 text-[#41b39d] border-b pb-4">
+        <span role="img" aria-label="profile"></span> Your Profile
       </h2>
       
 
@@ -297,7 +297,7 @@ const generateCV = async () => {
 
         {cvAnalysis?.explain ? (
           <div className="bg-red-50 p-6 rounded-xl border border-red-200 shadow-inner">
-            <h4 className="font-semibold text-red-700 mb-2">AI Explanation:</h4>
+            <h4 className="font-semibold text-[#41b39d] mb-2">AI Explanation:</h4>
             <p className="text-gray-700 leading-relaxed text-sm">
               {cvAnalysis.explain}
             </p>
@@ -312,7 +312,7 @@ const generateCV = async () => {
         <button
           onClick={runAnalysis}
           disabled={reanalyzing || !user?.resume}
-          className={`mt-6 w-full ${reanalyzing ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700'} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
+          className={`mt-6 w-full ${reanalyzing ? 'bg-gray-400' : 'bg-[#41b39d] '} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
         >
           {reanalyzing ? "Re-analyzing CV..." : user?.resume ? "Re-analyze CV" : "Upload Resume to Analyze"}
         </button>
@@ -324,7 +324,7 @@ const generateCV = async () => {
   <button
     onClick={generateCV}
     disabled={loadingCV}
-    className={`w-full ${loadingCV ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700'} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
+    className={`w-full ${loadingCV ? 'bg-gray-400' : 'bg-[#41b39d] '} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
   >
     {loadingCV ? "Generating CV..." : "Generate AI CV"}
   </button>

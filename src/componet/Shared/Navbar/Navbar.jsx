@@ -99,7 +99,7 @@ const Navbar = () => {
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="btn btn-sm btn-error w-full text-white"
+                      className="btn btn-sm btn-error bg-[#41b39d] outline-none border-none w-full text-white"
                     >
                       Logout
                     </button>

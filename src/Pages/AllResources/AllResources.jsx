@@ -127,7 +127,7 @@ const AllResources = () => {
                     <span className="font-semibold">Cost:</span> {res.cost}
                   </p>
                 </div>
-                <button className="mt-3 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition">
+                <button className="mt-3 bg-[#41b39d] text-white py-2 px-4 rounded  transition">
                   Go to Resource
                 </button>
               </a>

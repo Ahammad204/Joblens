@@ -34,12 +34,12 @@ const [isAdmin, isAdminLoading] = useAdmin();
             <>
          <li>
               <NavLink to="/dashboard/manageJobs" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaHome /> Manage Jobs
+                Manage Jobs
               </NavLink>
             </li>
          <li>
               <NavLink to="/dashboard/manageResources" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaHome /> Manage Resources
+                Manage Resources
               </NavLink>
             </li>
             
@@ -55,7 +55,7 @@ const [isAdmin, isAdminLoading] = useAdmin();
             </li>
             <li>
               <NavLink to="/dashboard/profile" className={({ isActive }) => `${navItemClasses} ${isActive ? "bg-white text-[#0fb894]" : ""}`}>
-                <FaHome /> Profile
+                Profile
               </NavLink>
             </li>
         

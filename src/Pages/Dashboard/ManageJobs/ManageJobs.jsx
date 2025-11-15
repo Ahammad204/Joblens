@@ -77,7 +77,7 @@ const ManageJobs = () => {
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Manage Jobs</h2>
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600"
+        className="bg-[#41b39d] text-white px-4 py-2 rounded mb-4 hover:bg-blue-600"
         onClick={() => setShowModal(true)}
       >
         Create Job
@@ -145,7 +145,7 @@ const ManageJobs = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                  className="px-3 py-1 bg-[#41b39d] text-white rounded hover:bg-green-600"
                 >
                   Create
                 </button>
